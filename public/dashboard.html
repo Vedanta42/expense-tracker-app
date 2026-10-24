@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Expense Tracker</title>
+</head>
+<body>
+    <h1>Expense Tracker Dashboard</h1>
+    
+    <button id="logoutBtn" style="float: right; background-color: #f44336; color: white; padding: 5px 10px; cursor: pointer;">Logout</button>
+    
+    <button id="rzp-button1">Buy Premium</button>
+    <p id="premiumMessage" style="display:none; color: green; font-weight: bold;">You are a premium user</p>
+    
+    <a href="/report.html" id="reportsLink">View Expense Reports</a>
+
+    <hr>
+
+    <form id="expenseForm">
+        <input type="number" placeholder="amount" id="amount" required>
+        <input type="text" placeholder="description" id="description" required>
+        
+        <!-- NEW: Note input field -->
+        <input type="text" placeholder="note (optional)" id="note">
+        
+        <select id="category">
+            <option value="auto" selected>✨ Auto-Categorize (AI)</option>
+            <option value="food">Food</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="transportation">Transportation</option>
+            <option value="utility">Utility</option>
+            <option value="housing">Housing</option>
+            <option value="healthcare">Healthcare</option>
+            <option value="education">Education</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="financial">Financial</option>
+            <option value="miscellaneous">Miscellaneous</option>          
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    
+    <p id="message"></p>
+    
+    <h2>Your Expenses</h2>
+    
+    <!-- Rows Per Page Selector -->
+    <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+        <label for="rowsPerPage">Rows per page:</label>
+        <select id="rowsPerPage">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+        </select>
+    </div>
+
+    <ul id="expenseList"></ul>
+    
+    <!-- Pagination Container -->
+    <div id="pagination" style="margin-top: 15px;"></div>
+
+    <div id="premiumFeatures" style="display:none; margin-top: 20px;">
+        <button id="leaderboardBtn">Show Leaderboard</button>
+        <ul id="leaderboardList"></ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.17.0/dist/axios.min.js"></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/expenses.js"></script>
+    <script src="./js/services/premium.js"></script>
+    <script src="./js/services/leaderboard.js"></script>
+</body>
+</html>

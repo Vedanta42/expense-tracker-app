@@ -1,0 +1,14 @@
+# Node dependencies
+node_modules/
+
+# Sensitive environment variables
+.env
+
+# Diagnostic logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db

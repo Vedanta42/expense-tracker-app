@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Reports</title>
+</head>
+<body>
+    <div id="premiumGateMessage" style="display: none;">
+        <h2>Premium Feature Only</h2>
+        <p>You must be a premium user to view and download detailed expense reports.</p>
+        <a href="/dashboard.html">Return to Dashboard</a>
+    </div>
+
+    <div id="reportContainer" style="display: none;">
+        <h1>Your Expense Reports</h1>
+        <a href="/dashboard.html">Back to Dashboard</a>
+        <br><br>
+        
+        <label for="timeframeFilter"><strong>View timeframe: </strong></label>
+        <select id="timeframeFilter">
+            <option value="all">All Time</option>
+            <option value="daily">Daily (Today)</option>
+            <option value="weekly">Weekly (Last 7 Days)</option>
+            <option value="monthly">Monthly (This Month)</option>
+        </select>
+
+        <br><br>
+
+        <h2>Expense History</h2>
+        <table border="1" id="expenseTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be injected here by JavaScript -->
+            </tbody>
+        </table>
+
+        <br><br>
+        <button id="downloadBtn">Download Report (.txt)</button>
+        <p id="downloadMessage"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.17.0/dist/axios.min.js"></script>
+    <script src="/js/report.js"></script>
+</body>
+</html>

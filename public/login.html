@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Expense Tracker</title>
+</head>
+<body>
+    <form id="loginForm">
+        <input type="email" placeholder="email" id="email" required>
+        <input type="password" placeholder="password" id="password" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <p>
+        New here? <a href="signup.html">Create an account</a>
+    </p>
+
+    <!-- Forgot Password Toggle Button -->
+    <button id="showForgotPwdBtn" style="margin-top: 10px;">Forgot Password?</button>
+
+    <!-- Hidden Forgot Password Form -->
+    <form id="forgotPasswordForm" style="display: none; margin-top: 20px;">
+        <input type="email" placeholder="Enter registered email" id="forgotEmail" required>
+        <button type="submit">Send Reset Mail</button>
+    </form>
+
+    <p id="message"></p>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.17.0/dist/axios.min.js"></script>
+    <script src="./js/login.js"></script>
+</body>
+</html>

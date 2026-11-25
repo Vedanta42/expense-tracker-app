@@ -1,13 +1,11 @@
 const express = require("express");
-const route = express.Router();
-const premiumFeatureController = require("../controllers/premiumFeatureControllers");
+const premiumFeatureControllers = require("../controllers/premiumFeatureControllers");
+const userAuthentication = require("../middleware/auth"); 
 
-// FIX: Destructure the specific function from your auth middleware file
-const { authenticate } = require("../middleware/auth");
+const router = express.Router();
 
-// Pass the destructured 'authenticate' function into the routes
-route.get("/leaderboard", authenticate, premiumFeatureController.getUserLeaderboard);
-route.get("/reports", authenticate, premiumFeatureController.getExpenseReports);
-route.get("/download", authenticate, premiumFeatureController.downloadReport);
+router.get("/leaderboard", userAuthentication.authenticate, premiumFeatureControllers.getPremiumLeaderboard);
+router.get("/download", userAuthentication.authenticate, premiumFeatureControllers.downloadReport);
+router.get("/download-history", userAuthentication.authenticate, premiumFeatureControllers.getDownloadHistory);
 
-module.exports = route;
+module.exports = router;

@@ -13,7 +13,8 @@ const passwordRoute = require("./routes/passwordRoutes");
 const User = require("./models/User");
 const Expense = require("./models/Expense");
 const Order = require("./models/Order"); 
-const ForgotPasswordRequest = require("./models/ForgotPasswordRequests"); // Added
+const ForgotPasswordRequest = require("./models/ForgotPasswordRequests");
+const DownloadedFile = require("./models/DownloadedFile");
 
 const app = express();
 
@@ -26,6 +27,9 @@ Order.belongsTo(User);
 
 User.hasMany(ForgotPasswordRequest); // Added
 ForgotPasswordRequest.belongsTo(User); // Added
+
+User.hasMany(DownloadedFile);
+DownloadedFile.belongsTo(User);
 
 app.use(express.json());
 app.use(cors());

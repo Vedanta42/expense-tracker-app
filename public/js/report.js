@@ -1,105 +1,79 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const isPremiumUser = localStorage.getItem("isPremiumUser") === "true";
-    const token = localStorage.getItem("token");
-    
-    const reportContainer = document.getElementById("reportContainer");
-    const premiumGateMessage = document.getElementById("premiumGateMessage");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const downloadMessage = document.getElementById("downloadMessage");
-    const expenseTableBody = document.querySelector("#expenseTable tbody");
-    const timeframeFilter = document.getElementById("timeframeFilter");
+const downloadReportBtn = document.getElementById("downloadReportBtn");
+const reportMessage = document.getElementById("reportMessage");
+const downloadHistoryList = document.getElementById("downloadHistoryList");
+const token = localStorage.getItem("token"); 
 
-    if (!isPremiumUser) {
-        premiumGateMessage.style.display = "block";
-        return; 
-    }
+// Redirect if not logged in
+if (!token) {
+    window.location.href = "/login.html";
+}
 
-    reportContainer.style.display = "block";
+downloadReportBtn.addEventListener("click", async () => {
+    downloadReportBtn.disabled = true;
+    downloadReportBtn.textContent = "Generating to S3...";
+    reportMessage.textContent = "";
 
-    const fetchAndRenderReports = async (timeframe = "all") => {
-        try {
-            const response = await axios.get(`/premium/reports?timeframe=${timeframe}`, {
-                headers: { "Authorization": token }
-            });
+    try {
+        const response = await axios.get("/premium/download", {
+            headers: { "Authorization": token }
+        });
+
+        if (response.status === 200) {
+            window.open(response.data.fileURL, "_blank");
+            reportMessage.style.color = "green";
+            reportMessage.textContent = "Report generated and downloaded successfully!";
             
-            const expenses = response.data.expenses;
-            expenseTableBody.innerHTML = ""; // Clear existing rows
-
-            if (expenses.length === 0) {
-                const emptyRow = document.createElement("tr");
-                const emptyCell = document.createElement("td");
-                emptyCell.colSpan = 4;
-                emptyCell.textContent = "No expenses found for this period.";
-                emptyRow.appendChild(emptyCell);
-                expenseTableBody.appendChild(emptyRow);
-                return;
-            }
-
-            expenses.forEach(expense => {
-                const row = document.createElement("tr");
-
-                const dateCell = document.createElement("td");
-                dateCell.textContent = new Date(expense.createdAt).toLocaleDateString();
-
-                const descCell = document.createElement("td");
-                descCell.textContent = expense.description;
-
-                const catCell = document.createElement("td");
-                catCell.textContent = expense.category;
-
-                const amtCell = document.createElement("td");
-                amtCell.textContent = expense.amount;
-
-                row.appendChild(dateCell);
-                row.appendChild(descCell);
-                row.appendChild(catCell);
-                row.appendChild(amtCell);
-
-                expenseTableBody.appendChild(row);
-            });
-        } catch (error) {
-            console.error("Error fetching reports:", error);
-            alert("Failed to load reports.");
+            loadDownloadHistory();
         }
-    };
-
-    // Initial load
-    fetchAndRenderReports(timeframeFilter.value);
-
-    // Listen for dropdown changes
-    timeframeFilter.addEventListener("change", (e) => {
-        fetchAndRenderReports(e.target.value);
-    });
-
-    // Handle .txt Download
-    downloadBtn.addEventListener("click", async () => {
-        try {
-            downloadBtn.disabled = true;
-            downloadMessage.textContent = "Generating file...";
-            downloadMessage.style.color = "black";
-
-            const response = await axios.get('/premium/download', {
-                headers: { "Authorization": token },
-                responseType: 'blob' // Important for file downloads
-            });
-
-            // Create a temporary link to trigger the browser download
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'Expense_Report.txt');
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-
-            downloadMessage.textContent = "Download complete!";
-            downloadMessage.style.color = "green";
-        } catch (error) {
-            console.error("Download failed:", error);
-            downloadMessage.textContent = "Failed to download report.";
-            downloadMessage.style.color = "red";
-        } finally {
-            downloadBtn.disabled = false;
+    } catch (error) {
+        console.error("Download error:", error);
+        reportMessage.style.color = "red";
+        
+        if (error.response && error.response.status === 401) {
+            reportMessage.textContent = "Unauthorized: You must be a Premium User to download reports.";
+            downloadReportBtn.style.display = "none"; 
+        } else {
+            reportMessage.textContent = "Failed to generate report. Please try again.";
         }
-    });
+    } finally {
+        downloadReportBtn.disabled = false;
+        downloadReportBtn.textContent = "Download Latest Report";
+    }
+});
+
+async function loadDownloadHistory() {
+    try {
+        const response = await axios.get("/premium/download-history", {
+            headers: { "Authorization": token }
+        });
+
+        downloadHistoryList.innerHTML = ""; 
+
+        if (response.data.history.length === 0) {
+            downloadHistoryList.innerHTML = "<li>No previous downloads found.</li>";
+            return;
+        }
+
+        response.data.history.forEach(file => {
+            const li = document.createElement("li");
+            const dateStr = new Date(file.downloadDate).toLocaleString();
+            
+            li.innerHTML = `
+                <span>${dateStr}</span>
+                <a href="${file.fileUrl}" target="_blank" style="margin-left: 15px; color: blue; font-weight: bold;">Re-Download</a>
+            `;
+            
+            downloadHistoryList.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error("Failed to load history", error);
+        if (error.response && error.response.status === 401) {
+            downloadHistoryList.innerHTML = "<li>Premium feature locked.</li>";
+        }
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    loadDownloadHistory();
 });

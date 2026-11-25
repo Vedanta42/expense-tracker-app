@@ -2,12 +2,11 @@ const { GoogleGenAI } = require("@google/genai");
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// Put the fastest working model from Step 1 first
+// Active models only: lite model first for fast classification & higher quota, then verified fallbacks
 const MODELS = [
-    "gemini-2.5-flash-lite",
-    "gemini-2.5-flash",
-    "gemini-3.8-flash",
+    "gemini-3.5-flash-lite",
     "gemini-4-hydrogen",
+    "gemini-3.8-flash",
 ];
 
 const VALID_CATEGORIES = [
@@ -63,6 +62,7 @@ Return ONLY the single lowercase category word with no punctuation or extra text
                 .replace(/[^a-z]/g, "");
 
             if (VALID_CATEGORIES.includes(responseText)) {
+                console.log(`Categorized "${description}" as "${responseText}" via ${model}`);
                 return responseText;
             }
 
